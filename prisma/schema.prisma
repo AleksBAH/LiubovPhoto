@@ -1,0 +1,76 @@
+generator client {
+    provider = "prisma-client-js"
+    binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x"]
+    output = "/home/ubuntu/liubov_photo_app/nextjs_space/node_modules/.prisma/client"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model Package {
+  id          String   @id @default(cuid())
+  name        String
+  category    String
+  days        Int      @default(10)
+  photosCount Int      @default(5)
+  price       Float    @default(0)
+  description String   @default("")
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([category])
+}
+
+model Project {
+  id            String    @id @default(cuid())
+  clientName    String
+  packageId     String?
+  packageName   String    @default("")
+  category      String    @default("")
+  sessionDate   DateTime
+  deadlineDate  DateTime
+  completedDate DateTime?
+  status        String    @default("awaiting_payment")
+  photosCount   Int       @default(0)
+  price         Float     @default(0)
+  paidAt        DateTime?
+  sourceTag     String    @default("")
+  notes         String    @default("")
+  photoLink     String    @default("")
+  reminderDays  Int       @default(3)
+  extraPhotos   Int       @default(0)
+  extraDays     Int       @default(0)
+  extraPrice    Float     @default(0)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([status])
+  @@index([sessionDate])
+  @@index([deadlineDate])
+}
+
+model Note {
+  id         String    @id @default(cuid())
+  text       String
+  isDone     Boolean   @default(false)
+  doneAt     DateTime?
+  reminderAt DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@index([isDone])
+}
+
+model SourceTag {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+}
+
+model WidgetOrder {
+  id       String @id @default("default")
+  ordering String @default("[\"projects\",\"gantt\",\"notes\"]")
+}
